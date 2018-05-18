@@ -61,13 +61,10 @@ class Main
 
   def calculate_tax_product index
     product = @products[index]
-    basic_tax =
-    case product[:category]
-    when "book", "food", "medical"
-      0
-    else
-      10
-    end
+    basic_tax = case product[:category]
+                when "book", "food", "medical" then 0
+                else 10
+                end
     import_tax = product[:type] == "import" ? 5 : 0
     price = product[:price]
     ((price * (basic_tax + import_tax) / 100) * 20).ceil / 20.0
@@ -96,12 +93,15 @@ class Main
 
   def display_cart
     break_line
+
     puts "Your cart:"
     puts "No.   Name   Price   Total"
+
     @choosed_product.each_with_index do |i, index|
       print index + 1
       puts "   #{@products[i][:name]}   #{@products[i][:price]}   #{calculate_total_price_one_product i}"
     end
+
     puts "================================================="
     puts "Total tax: #{calculate_total_tax}"
     puts "Total price: #{calculate_total_price}"
