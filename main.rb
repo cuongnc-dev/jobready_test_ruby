@@ -18,8 +18,11 @@ class Main
 
   def main
     show_list_product
+
     choose_product
+
     display_cart
+
     export_csv
   end
 
@@ -36,13 +39,16 @@ class Main
       print index + 1
       puts " #{product[:name]}"
     end
+
     break_line
   end
 
   def choose_product
     continue = "y"
+
     while !(continue == "N" || continue == "n")
       print "Choose product add to cart: "
+
       begin
         choose_product = Integer STDIN.gets.chomp
         if @products[choose_product.to_i - 1].nil?
@@ -52,7 +58,9 @@ class Main
         puts "Please choose product in list!"
         next
       end
+
       @choosed_product << choose_product.to_i - 1
+
       puts "You choosed product: #{@products[choose_product.to_i - 1][:name]}"
       print "Do you want to add more product (press 'n' to cancel): "
       continue = STDIN.gets.chomp
@@ -61,10 +69,12 @@ class Main
 
   def calculate_tax_product index
     product = @products[index]
+
     basic_tax = case product[:category]
                 when "book", "food", "medical" then 0
                 else 10
                 end
+
     import_tax = product[:type] == "import" ? 5 : 0
     price = product[:price]
     ((price * (basic_tax + import_tax) / 100) * 20).ceil / 20.0
@@ -72,18 +82,22 @@ class Main
 
   def calculate_total_tax
     total_tax = 0
+
     @choosed_product.each do |i|
       total_tax += calculate_tax_product i
     end
+
     total_tax.round 2
   end
 
   def calculate_total_price
     total_tax = calculate_total_tax
     total_price = 0
+
     @choosed_product.each do |i|
       total_price += @products[i][:price]
     end
+
     (total_price + total_tax).round 2
   end
 
@@ -109,8 +123,10 @@ class Main
 
   def export_csv
     break_line
+
     print "Do you want to export your cart to csv file? (press 'y' to export) "
     agree = STDIN.gets.chomp
+
     if agree == "Y" || agree == "y"
       CSV.open("your_cart.csv", "wb") do |csv|
         csv << ["No.", "Product name", "Price", "Tax", "Total"]
@@ -122,6 +138,7 @@ class Main
         csv << ["", "", "", calculate_total_tax, calculate_total_price]
       end
     end
+
     puts "All done!"
   end
 end
