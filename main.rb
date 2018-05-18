@@ -44,7 +44,7 @@ class Main
     while !(continue == "N" || continue == "n")
       print "Choose product add to cart: "
       begin
-        choose_product = Integer gets.chomp
+        choose_product = Integer STDIN.gets.chomp
         if @products[choose_product.to_i - 1].nil?
           raise ArgumentError
         end
@@ -55,7 +55,7 @@ class Main
       @choosed_product << choose_product.to_i - 1
       puts "You choosed product: #{@products[choose_product.to_i - 1][:name]}"
       print "Do you want to add more product (press 'n' to cancel): "
-      continue = gets.chomp
+      continue = STDIN.gets.chomp
     end
   end
 
@@ -90,13 +90,17 @@ class Main
     (total_price + total_tax).round 2
   end
 
+  def calculate_total_price_one_product index
+    (@products[index][:price] + calculate_tax_product(index)).round 2
+  end
+
   def display_cart
     break_line
     puts "Your cart:"
     puts "No.   Name   Price   Total"
     @choosed_product.each_with_index do |i, index|
       print index + 1
-      puts "   #{@products[i][:name]}   #{@products[i][:price]}   #{(@products[i][:price] + calculate_tax_product(i)).round 2}"
+      puts "   #{@products[i][:name]}   #{@products[i][:price]}   #{calculate_total_price_one_product i}"
     end
     puts "================================================="
     puts "Total tax: #{calculate_total_tax}"
@@ -106,7 +110,7 @@ class Main
   def export_csv
     break_line
     print "Do you want to export your cart to csv file? (press 'y' to export) "
-    agree = gets.chomp
+    agree = STDIN.gets.chomp
     if agree == "Y" || agree == "y"
       CSV.open("your_cart.csv", "wb") do |csv|
         csv << ["No.", "Product name", "Price", "Tax", "Total"]
